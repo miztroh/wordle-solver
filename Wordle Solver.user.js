@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Wordle Solver
-// @version      1.0.3
+// @version      1.0.4
 // @description  A userscript that helps identify possible solutions to the Wordle daily word game.
 // @author       Jonathan Cox
 // @namespace    https://gitlab.com/miztroh
@@ -72,6 +72,7 @@
                                     // This letter is in use in this slot, so only keep slots where this letter is present
                                     slotsByLetter[letter] = [...slots].filter(slot => rowLetters[slot] === letter);
 
+                                    // For all other letters, remove this slot
                                     letters.filter(l => l !== letter).forEach(
                                         (l) => {
                                             slotsByLetter[l] = slotsByLetter[l].filter(slot => slot !== index);
@@ -86,16 +87,16 @@
 
                 // If there are no rows with 5 letters, bail
                 if (!completeRows) return;
-                // Start building the pattern
+                // Build a RegExp pattern to match against dictionary words
                 const pattern = `^${slots.map(slot => `(${Object.keys(slotsByLetter).filter(letter => slotsByLetter[letter].includes(slot)).join('|')})`).join('')}$`;
-                // Find matching words
-                const matches = words.filter(word => word.match(pattern));
-                // Log the number of matches found
-                console.log(`\n${matches.length} POSSIBLE SOLUTION(S):`);
+                // Find possible solutions using the pattern
+                const solutions = words.filter(word => word.match(pattern));
+                // Log the number of solutions found
+                console.log(`\n${solutions.length} POSSIBLE SOLUTION(S):`);
 
-                // Log matching words 10 at a time
-                while (matches.length) {
-                    console.log(matches.splice(0, 10));
+                // Log solutions 10 at a time to aid in readability
+                while (solutions.length) {
+                    console.log(solutions.splice(0, 10));
                 }
             }
         );
