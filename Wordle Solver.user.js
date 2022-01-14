@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Wordle Solver
-// @version      1.0.5
+// @version      1.0.6
 // @description  A userscript that helps identify possible solutions to the Wordle daily word game.
 // @author       Jonathan Cox
 // @namespace    https://gitlab.com/miztroh
@@ -39,6 +39,9 @@
                 // Track the number of rows with 5 submitted letters
                 let completeRows = 0;
 
+                // Build an array of required letters
+                let requiredLetters = [];
+
                 // Loop over each row
                 for (let row of rows) {
                     // Build an array of this row's letters
@@ -61,6 +64,8 @@
                                 case 'present':
                                     // This letter is in use but not in this slot, so keep any remaining slots except this one
                                     slotsByLetter[letter] = slotsByLetter[letter].filter(slot => slot !== index);
+                                    // This letter shows up at least once, so add it to the required letters array
+                                    if (!requiredLetters.includes(letter)) requiredLetters.push(letter);
                                     break;
                                 case 'absent':
                                     // This letter is not in use, so discard all slots
@@ -69,6 +74,8 @@
                                 case 'correct':
                                     // This letter is in use in this slot, so only keep slots where this letter is present
                                     slotsByLetter[letter] = [...slots].filter(slot => rowLetters[slot] === letter);
+                                    // This letter shows up at least once, so add it to the required letters array
+                                    if (!requiredLetters.includes(letter)) requiredLetters.push(letter);
 
                                     // For all other letters, remove this slot
                                     letters.filter(l => l !== letter).forEach(
@@ -85,10 +92,17 @@
 
                 // If there are no rows with 5 letters, bail
                 if (!completeRows) return;
-                // Build a RegExp pattern to match against dictionary words
-                const pattern = `^${slots.map(slot => `(${Object.keys(slotsByLetter).filter(letter => slotsByLetter[letter].includes(slot)).join('|')})`).join('')}$`;
-                // Find possible solutions using the pattern
-                const solutions = words.filter(word => word.match(pattern));
+
+                // Build an array of regular expressions.
+                // To be a possible solution, a word must match each.
+                const regexs = [
+                    `^${slots.map(slot => `(${Object.keys(slotsByLetter).filter(letter => slotsByLetter[letter].includes(slot)).join('|')})`).join('')}$`,
+                    ...requiredLetters.map(letter => `${letter}+`)
+                ];
+
+                // Find possible solutions
+                const solutions = words.filter(word => !regexs.filter(regex => !word.match(regex)).length);
+
                 // Log the number of solutions found
                 console.log(`\n${solutions.length} POSSIBLE SOLUTION(S):`);
 
