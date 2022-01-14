@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Wordle Solver
-// @version      1.0.6
+// @version      1.0.7
 // @description  A userscript that helps identify possible solutions to the Wordle daily word game.
 // @author       Jonathan Cox
 // @namespace    https://gitlab.com/miztroh
@@ -19,20 +19,25 @@
             (e) => {
                 // If this isn't the 'Enter' key, bail
                 if (e.key !== 'Enter') return;
+
                 // Find the game board
                 const board = document.querySelector('game-app').shadowRoot.getElementById('board');
+
                 // Build an array of rows
                 const rows = Array.from(board.querySelectorAll('game-row'));
+
                 // Slots template
                 const slots = [0, 1, 2, 3, 4];
+
                 // Letters array
-                let i;
-                const letters = [...Array(26)].map(_=>(++i).toString(36),i=9);
+                let i = 9;
+                const letters = [...Array(26)].map(_ => (i += 1).toString(36));
 
                 // Track slots available to each letter
                 const slotsByLetter = {};
 
                 for (let letter of letters) {
+					// Each letter is a key with a value set to a clone of the slots template array
                     slotsByLetter[letter] = [...slots];
                 }
 
@@ -46,10 +51,13 @@
                 for (let row of rows) {
                     // Build an array of this row's letters
                     let rowLetters = row.getAttribute('letters').split('');
+
                     // If we don't have 5 letters, bail
                     if (rowLetters.length !== 5) break;
+
                     // Otherwise, this is a complete row
                     completeRows += 1;
+
                     // Build an array of the tiles in this row
                     let tiles = Array.from(row.shadowRoot.querySelectorAll('game-tile'));
 
@@ -64,16 +72,20 @@
                                 case 'present':
                                     // This letter is in use but not in this slot, so keep any remaining slots except this one
                                     slotsByLetter[letter] = slotsByLetter[letter].filter(slot => slot !== index);
+
                                     // This letter shows up at least once, so add it to the required letters array
                                     if (!requiredLetters.includes(letter)) requiredLetters.push(letter);
+
                                     break;
                                 case 'absent':
                                     // This letter is not in use, so discard all slots
                                     if (rowLetters.indexOf(letter) === index) slotsByLetter[letter] = [];
+
                                     break;
                                 case 'correct':
                                     // This letter is in use in this slot, so only keep slots where this letter is present
                                     slotsByLetter[letter] = [...slots].filter(slot => rowLetters[slot] === letter);
+
                                     // This letter shows up at least once, so add it to the required letters array
                                     if (!requiredLetters.includes(letter)) requiredLetters.push(letter);
 
