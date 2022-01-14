@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Wordle Solver
-// @version      1.0.1
+// @version      1.0.2
 // @description  A userscript that helps identify possible solutions to the Wordle daily word game.
 // @author       Jonathan Cox
 // @namespace    https://gitlab.com/miztroh
@@ -91,7 +91,7 @@
                 // Find matching words
                 const matches = words.filter(word => word.match(pattern));
                 // Log the number of matches found
-                console.log(`\n${matches.length} MATCHES FOUND!`);
+                console.log(`\n${matches.length} POSSIBLE SOLUTIONS:`);
 
                 // Log matching words 10 at a time
                 while (matches.length) {
