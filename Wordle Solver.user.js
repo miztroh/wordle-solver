@@ -1,10 +1,10 @@
 // ==UserScript==
 // @name         Wordle Solver
-// @version      1.0.12
+// @version      1.0.13
 // @description  A userscript that helps identify possible solutions to the Wordle daily word game.
 // @author       Jonathan Cox
 // @namespace    https://gitlab.com/miztroh
-// @match        https://www.powerlanguage.co.uk/wordle/
+// @match        https://www.nytimes.com/games/wordle/index.html
 // @updateURL    https://github.com/miztroh/wordle-solver/raw/main/Wordle%20Solver.user.js
 // @downloadURL  https://github.com/miztroh/wordle-solver/raw/main/Wordle%20Solver.user.js
 // ==/UserScript==
