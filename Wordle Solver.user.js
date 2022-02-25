@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         Wordle Solver
-// @version      1.0.13
+// @version      1.0.14
 // @description  A userscript that helps identify possible solutions to the Wordle daily word game.
 // @author       Jonathan Cox
 // @namespace    https://gitlab.com/miztroh
@@ -83,9 +83,6 @@
 
 									break;
 								case 'correct':
-									// This letter is in use in this slot, so only keep slots where this letter is present
-									slotsByLetter[letter] = slotsByLetter[letter].filter(slot => slot >= index);
-
 									// This letter shows up at least once, so add it to the required letters array
 									if (!requiredLetters.includes(letter)) requiredLetters.push(letter);
 
